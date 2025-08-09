@@ -1,4 +1,5 @@
 site_name: TAKEPROFIT TECH DOCS
+site_url: https://cdxx88.github.io/documentation/
 
 theme:
   name: material
