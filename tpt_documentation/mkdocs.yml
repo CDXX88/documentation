@@ -1,0 +1,27 @@
+site_name: TAKEPROFIT TECH DOCS
+
+theme:
+  name: material
+  logo: assets/apple-touch-icon.png
+  favicon: assets/favicon.ico
+  palette:
+    scheme: default
+    primary: custom
+    accent: pink
+
+extra_css:
+  - styles/overrides.css
+
+markdown_extensions:
+  - toc:
+      permalink: false
+      toc_depth: 2-6   # toc is the right-hand side menu, now only takes ## to ###### headings
+
+nav:
+  - INTRODUCE: index.md
+  - PRODUCTS LIST: products_list/products_names_and_codes.md
+  - PRODUCTS DOCUMENTATION:
+      - Takeprofit tech hub:
+          - Overview: products_documentation/tpt_hub/1_tpt_hub_overview.md
+          - How it works: products_documentation/tpt_hub/2_tpt_hub_how_it_works.md
+          - List of supported liquidity providers: products_documentation/tpt_hub/3_tpt_hub_list_of_supported_liquidity_providers.md
