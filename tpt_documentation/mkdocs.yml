@@ -5,6 +5,8 @@ theme:
   name: material
   logo: assets/apple-touch-icon.png
   favicon: assets/favicon.ico
+  features:
+    - content.image.lightbox
   palette:
     scheme: default
     primary: custom
@@ -14,6 +16,7 @@ extra_css:
   - styles/overrides.css
 
 markdown_extensions:
+  - attr_list
   - toc:
       permalink: false
       toc_depth: 2-6   # toc is the right-hand side menu, now only takes ## to ###### headings
@@ -26,3 +29,20 @@ nav:
           - Overview: products_documentation/tpt_hub/1_tpt_hub_overview.md
           - How it works: products_documentation/tpt_hub/2_tpt_hub_how_it_works.md
           - List of supported liquidity providers: products_documentation/tpt_hub/3_tpt_hub_list_of_supported_liquidity_providers.md
+          - Installation: products_documentation/tpt_hub/4_tpt_hub_installation.md
+          - Updating: products_documentation/tpt_hub/5_tpt_hub_updating.md
+          - Configuration: products_documentation/tpt_hub/6_tpt_hub_configuration.md
+          - Overview: products_documentation/tpt_hub/7_tpt_hub_overview.md
+          - Monitoring: products_documentation/tpt_hub/8_tpt_hub_monitoring.md
+          - Home page: products_documentation/tpt_hub/9_tpt_hub_home_page.md
+          - Market watch: products_documentation/tpt_hub/10_tpt_hub_market_watch.md
+          - Exposure: products_documentation/tpt_hub/11_tpt_hub_exposure.md
+          - Users: products_documentation/tpt_hub/12_tpt_hub_users.md
+          - Settings: products_documentation/tpt_hub/13_tpt_hub_settings.md
+          - Databases: products_documentation/tpt_hub/14_tpt_hub_databases.md
+          - Risk management: products_documentation/tpt_hub/15_tpt_hub_risk_management.md
+          - CYSEC reports: products_documentation/tpt_hub/16_tpt_hub_cysec_reports.md
+          - REST API: products_documentation/tpt_hub/17_tpt_hub_rest_api.md
+          - Auxiliary hub tools: products_documentation/tpt_hub/18_tpt_hub_auxiliary_hub_tools.md
+          - Questions & answers: products_documentation/tpt_hub/19_tpt_hub_questions_and_answers.md
+          - Release Notes: products_documentation/tpt_hub/20_tpt_hub_release_notes.md
