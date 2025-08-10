@@ -1,9 +1,8 @@
 (function () {
-  // 🔧 Adjust these to your real section path fragments (what appears in result links)
   const SCOPES = [
-    { key: "all",    label: "All",               match: null },
-    { key: "hub",    label: "TPT Hub",           match: "/products_documentation/tpt_hub/" },
-    { key: "social", label: "TPT Social trading",match: "/tpt_social_trading/" }
+    { key: "all",    label: "All",                match: null,                                           resultLabel: "" },
+    { key: "hub",    label: "TPT Hub",            match: "products_documentation/tpt_hub/",              resultLabel: "Takeprofit tech hub" },
+    { key: "social", label: "TPT Social trading", match: "products_documentation/tpt_social_trading/",   resultLabel: "Takeprofit social trading" }
   ];
 
   const STORAGE_KEY = "tpt-search-scope";
@@ -16,7 +15,6 @@
 
     form.style.position = "relative";
 
-    // container
     const wrap = document.createElement("div");
     wrap.id = "tpt-scope";
     wrap.className = "tpt-scope";
@@ -24,21 +22,18 @@
     wrap.setAttribute("aria-haspopup", "listbox");
     wrap.setAttribute("aria-expanded", "false");
 
-    // button (current value)
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "tpt-scope__button";
     btn.setAttribute("aria-label", "Search scope");
     wrap.appendChild(btn);
 
-    // menu
     const list = document.createElement("ul");
     list.className = "tpt-scope__menu";
     list.setAttribute("role", "listbox");
     wrap.appendChild(list);
 
-    // populate items
-    SCOPES.forEach((s, i) => {
+    SCOPES.forEach(s => {
       const li = document.createElement("li");
       li.className = "tpt-scope__item";
       li.setAttribute("role", "option");
@@ -48,12 +43,10 @@
       list.appendChild(li);
     });
 
-    // set current
     const current = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
     btn.textContent = current.label;
     markSelected(list, current.key);
 
-    // events
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleMenu(wrap, list, true);
@@ -67,12 +60,11 @@
       btn.textContent = SCOPES.find(s => s.key === key).label;
       markSelected(list, key);
       toggleMenu(wrap, list, false);
-      filterResults();
+      filterResults(); // immediate filter on selection
     });
 
-    // keyboard navigation
     btn.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+      if (["ArrowDown", "Enter", " "].includes(e.key)) {
         e.preventDefault();
         toggleMenu(wrap, list, true);
         focusFirst(list);
@@ -83,12 +75,10 @@
       const idx = items.indexOf(document.activeElement);
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        const next = items[Math.min(idx + 1, items.length - 1)];
-        next && next.focus();
+        items[Math.min(idx + 1, items.length - 1)]?.focus();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        const prev = items[Math.max(idx - 1, 0)];
-        prev && prev.focus();
+        items[Math.max(idx - 1, 0)]?.focus();
       } else if (e.key === "Enter") {
         e.preventDefault();
         document.activeElement.click();
@@ -109,30 +99,68 @@
   function toggleMenu(wrap, list, open) {
     wrap.setAttribute("aria-expanded", open ? "true" : "false");
     list.classList.toggle("is-open", !!open);
-    if (open) setTimeout(() => list.scrollTop = 0, 0);
   }
 
   function focusFirst(list) {
-    const first = list.querySelector(".tpt-scope__item");
-    first && first.focus();
+    list.querySelector(".tpt-scope__item")?.focus();
   }
 
   function markSelected(list, key) {
     list.querySelectorAll(".tpt-scope__item").forEach(li => {
-      li.classList.toggle("is-selected", li.dataset.key === key);
-      li.setAttribute("aria-selected", li.dataset.key === key ? "true" : "false");
+      const selected = li.dataset.key === key;
+      li.classList.toggle("is-selected", selected);
+      li.setAttribute("aria-selected", selected ? "true" : "false");
     });
+  }
+
+  function normalizePath(path) {
+    try { return decodeURIComponent(path).toLowerCase(); }
+    catch { return path.toLowerCase(); }
+  }
+  function normFrag(f) {
+    return f.replace(/^\//, "").toLowerCase();
   }
 
   function filterResults() {
     const rule = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
-    const match = rule.match;
-    const results = document.querySelectorAll('.md-search-result__list > li');
-    results.forEach(li => {
+    const match = rule.match ? normFrag(rule.match) : null;
+
+    document.querySelectorAll('.md-search-result__list > li').forEach(li => {
       const link = li.querySelector('a.md-search-result__link');
       if (!link) return;
-      const href = link.getAttribute("href") || "";
-      li.style.display = (!match || href.includes(match)) ? "" : "none";
+      const href = normalizePath(link.getAttribute("href") || "");
+      const ok = !match || href.includes(match);
+      li.style.display = ok ? "" : "none";
+    });
+
+    annotateResults();
+  }
+
+  function annotateResults() {
+    const currentScope = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
+    document.querySelectorAll(".md-search-result__list > li").forEach(li => {
+      li.querySelector(".tpt-result-source")?.remove();
+      const link = li.querySelector("a.md-search-result__link");
+      if (!link) return;
+
+      const href = normalizePath(link.getAttribute("href") || "");
+      let label = "";
+
+      if (currentScope.key !== "all") {
+        // fixed label from SCOPES
+        label = currentScope.resultLabel;
+      } else {
+        // infer label from matching SCOPES
+        const matchScope = SCOPES.find(s => s.match && href.includes(normFrag(s.match)));
+        label = matchScope?.resultLabel || "";
+      }
+
+      if (label) {
+        const meta = document.createElement("div");
+        meta.className = "tpt-result-source";
+        meta.textContent = label;
+        li.querySelector(".md-search-result__article")?.appendChild(meta);
+      }
     });
   }
 
@@ -151,4 +179,9 @@
 
   document.addEventListener("DOMContentLoaded", init);
   document.addEventListener("md-content-updated", init);
+
+  // also filter whenever user types
+  document.addEventListener("input", (e) => {
+    if (e.target.matches(".md-search__input")) filterResults();
+  });
 })();

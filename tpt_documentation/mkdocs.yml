@@ -7,24 +7,24 @@ theme:
   favicon: assets/favicon.ico
   features:
     - content.image.lightbox
-    - search.suggest
-    - search.highlight
-    - search.clear_button
+    - clear_buttons
   palette:
     scheme: default
     primary: custom
     accent: pink
 
 plugins:
-  - search
-  - awesome-pages
+  - search:
+      lang:
+        - en
+      separator: '[\s\-]+'
 
 #extra_javascript:
 #  - js/search-scope.js
 
 extra_css:
   - styles/overrides.css
-  #- styles/search-scope.css
+#  - styles/search-scope.css
 
 markdown_extensions:
   - attr_list
@@ -37,7 +37,7 @@ nav:
   - PRODUCTS LIST: products_list/products_names_and_codes.md
   - PRODUCTS DOCUMENTATION:
       - Takeprofit tech hub:
-          - Overview: products_documentation/tpt_hub/1_tpt_hub_overview.md
+          - Introduce: products_documentation/tpt_hub/1_tpt_hub_introduce.md
           - How it works: products_documentation/tpt_hub/2_tpt_hub_how_it_works.md
           - List of supported liquidity providers: products_documentation/tpt_hub/3_tpt_hub_list_of_supported_liquidity_providers.md
           - Installation: products_documentation/tpt_hub/4_tpt_hub_installation.md
