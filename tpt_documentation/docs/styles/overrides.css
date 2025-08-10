@@ -4,8 +4,28 @@
   --md-primary-fg-color--dark: #420043;
 }
 
+/* if you later enable dark mode, keep primary consistent */
 [data-md-color-scheme="slate"] {
   --md-primary-fg-color: #5c0658;
   --md-primary-fg-color--light: #7a2a77;
   --md-primary-fg-color--dark: #420043;
 }
+
+/* Search bar: white field, black text/icon */
+.md-search__inner,
+.md-search__input {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+/* Hide share and clear buttons in search field
+.md-search__icon[title="Share"],
+.md-search__icon[title="Clear"] {
+  display: none !important;
+}
+*/
+
+/* Settings color of search field elements */
+.md-search__input::placeholder { color: #000 !important; opacity: 1; }
+.md-search__icon { color: #000 !important; fill: #000 !important; }
+.md-search__input { padding-right: 7rem !important; }

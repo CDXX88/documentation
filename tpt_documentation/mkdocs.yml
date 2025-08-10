@@ -7,13 +7,24 @@ theme:
   favicon: assets/favicon.ico
   features:
     - content.image.lightbox
+    - search.suggest
+    - search.highlight
+    - search.clear_button
   palette:
     scheme: default
     primary: custom
     accent: pink
 
+plugins:
+  - search
+  - awesome-pages
+
+#extra_javascript:
+#  - js/search-scope.js
+
 extra_css:
   - styles/overrides.css
+  #- styles/search-scope.css
 
 markdown_extensions:
   - attr_list
