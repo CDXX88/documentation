@@ -18,12 +18,11 @@
   color: #000 !important;
 }
 
-/* Hide share and clear buttons in search field
+/* Hide share and clear buttons in search field */
 .md-search__icon[title="Share"],
 .md-search__icon[title="Clear"] {
   display: none !important;
 }
-*/
 
 /* Settings color of search field elements */
 .md-search__input::placeholder { color: #000 !important; opacity: 1; }

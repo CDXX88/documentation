@@ -19,12 +19,12 @@ plugins:
         - en
       separator: '[\s\-]+'
 
-#extra_javascript:
-#  - js/search-scope.js
+extra_javascript:
+  - js/search-scope.js
 
 extra_css:
   - styles/overrides.css
-#  - styles/search-scope.css
+  - styles/search-scope.css
 
 markdown_extensions:
   - attr_list

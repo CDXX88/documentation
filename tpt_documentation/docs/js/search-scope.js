@@ -1,13 +1,23 @@
 (function () {
+  // Define search scopes
   const SCOPES = [
-    { key: "all",    label: "All",                match: null,                                           resultLabel: "" },
-    { key: "hub",    label: "TPT Hub",            match: "products_documentation/tpt_hub/",              resultLabel: "Takeprofit tech hub" },
-    { key: "social", label: "TPT Social trading", match: "products_documentation/tpt_social_trading/",   resultLabel: "Takeprofit social trading" }
+    { key: "all",    label: "All",               match: null },
+    { key: "hub",    label: "TPT Hub",           match: "products_documentation/tpt_hub/" },
+    { key: "social", label: "TPT Social Trading",match: "products_documentation/tpt_social_trading/" }
   ];
 
   const STORAGE_KEY = "tpt-search-scope";
   const getScope = () => localStorage.getItem(STORAGE_KEY) || "all";
   const setScope = (k) => localStorage.setItem(STORAGE_KEY, k);
+
+  // Normalize paths for matching
+  function normalizePath(href) {
+    const url = new URL(href, window.location.href);
+    return url.pathname.replace(/^\/+/, "");
+  }
+  function normFrag(frag) {
+    return (frag || "").replace(/^\/+/, "");
+  }
 
   function ensureScopeUI() {
     const form = document.querySelector(".md-search__form");
@@ -15,6 +25,7 @@
 
     form.style.position = "relative";
 
+    // container
     const wrap = document.createElement("div");
     wrap.id = "tpt-scope";
     wrap.className = "tpt-scope";
@@ -22,18 +33,21 @@
     wrap.setAttribute("aria-haspopup", "listbox");
     wrap.setAttribute("aria-expanded", "false");
 
+    // button
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "tpt-scope__button";
     btn.setAttribute("aria-label", "Search scope");
     wrap.appendChild(btn);
 
+    // menu
     const list = document.createElement("ul");
     list.className = "tpt-scope__menu";
     list.setAttribute("role", "listbox");
     wrap.appendChild(list);
 
-    SCOPES.forEach(s => {
+    // populate
+    SCOPES.forEach((s) => {
       const li = document.createElement("li");
       li.className = "tpt-scope__item";
       li.setAttribute("role", "option");
@@ -43,10 +57,12 @@
       list.appendChild(li);
     });
 
+    // set current
     const current = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
     btn.textContent = current.label;
     markSelected(list, current.key);
 
+    // events
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleMenu(wrap, list, true);
@@ -60,11 +76,12 @@
       btn.textContent = SCOPES.find(s => s.key === key).label;
       markSelected(list, key);
       toggleMenu(wrap, list, false);
-      filterResults(); // immediate filter on selection
+      filterResults();
     });
 
+    // keyboard nav
     btn.addEventListener("keydown", (e) => {
-      if (["ArrowDown", "Enter", " "].includes(e.key)) {
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         toggleMenu(wrap, list, true);
         focusFirst(list);
@@ -75,10 +92,12 @@
       const idx = items.indexOf(document.activeElement);
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        items[Math.min(idx + 1, items.length - 1)]?.focus();
+        const next = items[Math.min(idx + 1, items.length - 1)];
+        next && next.focus();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        items[Math.max(idx - 1, 0)]?.focus();
+        const prev = items[Math.max(idx - 1, 0)];
+        prev && prev.focus();
       } else if (e.key === "Enter") {
         e.preventDefault();
         document.activeElement.click();
@@ -99,71 +118,83 @@
   function toggleMenu(wrap, list, open) {
     wrap.setAttribute("aria-expanded", open ? "true" : "false");
     list.classList.toggle("is-open", !!open);
+    if (open) setTimeout(() => list.scrollTop = 0, 0);
   }
-
   function focusFirst(list) {
-    list.querySelector(".tpt-scope__item")?.focus();
+    const first = list.querySelector(".tpt-scope__item");
+    first && first.focus();
   }
-
   function markSelected(list, key) {
     list.querySelectorAll(".tpt-scope__item").forEach(li => {
-      const selected = li.dataset.key === key;
-      li.classList.toggle("is-selected", selected);
-      li.setAttribute("aria-selected", selected ? "true" : "false");
+      li.classList.toggle("is-selected", li.dataset.key === key);
+      li.setAttribute("aria-selected", li.dataset.key === key ? "true" : "false");
     });
   }
 
-  function normalizePath(path) {
-    try { return decodeURIComponent(path).toLowerCase(); }
-    catch { return path.toLowerCase(); }
-  }
-  function normFrag(f) {
-    return f.replace(/^\//, "").toLowerCase();
-  }
-
-  function filterResults() {
-    const rule = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
-    const match = rule.match ? normFrag(rule.match) : null;
-
-    document.querySelectorAll('.md-search-result__list > li').forEach(li => {
-      const link = li.querySelector('a.md-search-result__link');
+  // Annotate results with scope and section
+  function annotateResults() {
+    const results = document.querySelectorAll(".md-search-result__list > li");
+    results.forEach((li) => {
+      const link = li.querySelector("a.md-search-result__link");
       if (!link) return;
-      const href = normalizePath(link.getAttribute("href") || "");
-      const ok = !match || href.includes(match);
-      li.style.display = ok ? "" : "none";
+
+      if (li.querySelector(".tpt-result-meta")) return;
+
+      const path = normalizePath(link.getAttribute("href") || "");
+      let scope = "";
+      if (path.includes("products_documentation/tpt_hub/")) scope = "Takeprofit Tech Hub";
+      else if (path.includes("products_documentation/tpt_social_trading/")) scope = "Takeprofit Social Trading";
+
+      const hash = (link.getAttribute("href") || "").split("#")[1] || "";
+      const section = hash
+        ? hash.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+        : "";
+
+      if (!scope && !section) return;
+
+      const meta = document.createElement("div");
+      meta.className = "tpt-result-meta";
+
+      if (scope) {
+        const badge = document.createElement("span");
+        badge.className = `tpt-badge tpt-badge--${scope.toLowerCase()}`;
+        badge.textContent = scope;
+        meta.appendChild(badge);
+      }
+      if (section) {
+        const sep = document.createElement("span");
+        sep.className = "tpt-meta-sep";
+        sep.textContent = "›";
+        const sec = document.createElement("span");
+        sec.className = "tpt-section";
+        sec.textContent = section;
+        meta.appendChild(sep);
+        meta.appendChild(sec);
+      }
+
+      const article = li.querySelector(".md-search-result__article");
+      (article || li).appendChild(meta);
+    });
+  }
+
+  // Filter by selected scope
+  function filterResults() {
+    const rule = SCOPES.find((s) => s.key === getScope()) || SCOPES[0];
+    const frag = normFrag(rule.match);
+
+    const results = document.querySelectorAll(".md-search-result__list > li");
+    results.forEach((li) => {
+      const link = li.querySelector("a.md-search-result__link");
+      if (!link) return;
+      const path = normalizePath(link.getAttribute("href") || "");
+      const show = !frag || path.includes(frag);
+      li.style.display = show ? "" : "none";
     });
 
     annotateResults();
   }
 
-  function annotateResults() {
-    const currentScope = SCOPES.find(s => s.key === getScope()) || SCOPES[0];
-    document.querySelectorAll(".md-search-result__list > li").forEach(li => {
-      li.querySelector(".tpt-result-source")?.remove();
-      const link = li.querySelector("a.md-search-result__link");
-      if (!link) return;
-
-      const href = normalizePath(link.getAttribute("href") || "");
-      let label = "";
-
-      if (currentScope.key !== "all") {
-        // fixed label from SCOPES
-        label = currentScope.resultLabel;
-      } else {
-        // infer label from matching SCOPES
-        const matchScope = SCOPES.find(s => s.match && href.includes(normFrag(s.match)));
-        label = matchScope?.resultLabel || "";
-      }
-
-      if (label) {
-        const meta = document.createElement("div");
-        meta.className = "tpt-result-source";
-        meta.textContent = label;
-        li.querySelector(".md-search-result__article")?.appendChild(meta);
-      }
-    });
-  }
-
+  // Observe results for changes
   function observeResults() {
     const container = document.querySelector('[data-md-component="search-results"]');
     if (!container) return;
@@ -175,13 +206,20 @@
     ensureScopeUI();
     observeResults();
     filterResults();
+
+    // 🔹 Re-filter after typing in search
+    const searchInput = document.querySelector('.md-search__input');
+    if (searchInput) {
+      let timer;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          filterResults();
+        }, 100);
+      });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);
   document.addEventListener("md-content-updated", init);
-
-  // also filter whenever user types
-  document.addEventListener("input", (e) => {
-    if (e.target.matches(".md-search__input")) filterResults();
-  });
 })();
