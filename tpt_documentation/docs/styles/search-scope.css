@@ -1,0 +1,101 @@
+/* === Scope dropdown inside the search field === */
+.tpt-scope {
+  position: absolute;
+  right: .4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11; /* above input */
+}
+
+/* Button showing current scope */
+.tpt-scope__button {
+  background: none;
+  border: none;
+  font: inherit;
+  color: #000;
+  padding: .25rem 1.4rem .25rem .5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+/* caret */
+.tpt-scope__button::after {
+  content: "";
+  position: absolute;
+  right: .2rem;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-50%);
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23000' width='20' height='20' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* dropdown menu — always DOWN */
+.tpt-scope__menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  font-size: 0.60rem;
+  margin-top: .3rem;
+  list-style: none;
+  background: #fff; /* white */
+  color: #000;      /* black text */
+  border: 1px solid #cfcfcf;
+  border-radius: 0; /* no corner rounding */
+  box-shadow: 0 6px 18px rgb(0 0 0 / 20%);
+  padding: .25rem 0;
+  min-width: 8rem;
+  display: none;
+  z-index: 12;
+}
+.tpt-scope__menu.is-open { display: block; }
+
+.tpt-scope__item {
+  padding: .5rem .9rem;
+  cursor: pointer;
+}
+.tpt-scope__item:hover {
+  background: #f2f2f2;
+}
+.tpt-scope__item.is-selected {
+  font-weight: 600;
+  background: #ececec;
+}
+
+/* Keep search field white with black text/icons */
+.md-search__inner,
+.md-search__input {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.md-search__input {
+  padding-right: 7rem; /* space for scope control */
+}
+.md-search__input::placeholder {
+  color: #000 !important;
+  opacity: 1;
+}
+.md-search__icon {
+  color: #000 !important;
+  fill: #000 !important;
+}
+
+/* === Group headers for "All" mode === */
+.tpt-group-header {
+  margin: .35rem .75rem .25rem;
+  padding: .25rem .2rem;
+  font-weight: 700;
+  font-size: 0.9375rem; /* ~15px */
+  color: rgba(0,0,0,.54);
+  border-bottom: 1px solid #eee;
+}
+
+/* === Source label for scoped mode === */
+.tpt-result-source {
+  margin-top: .25rem;
+  font-size: 0.9375rem;
+  color: rgba(0,0,0,.54);
+}

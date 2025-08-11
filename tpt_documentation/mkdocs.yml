@@ -7,13 +7,24 @@ theme:
   favicon: assets/favicon.ico
   features:
     - content.image.lightbox
+    - clear_buttons
   palette:
     scheme: default
     primary: custom
     accent: pink
 
+plugins:
+  - search:
+      lang:
+        - en
+      separator: '[\s\-]+'
+
+#extra_javascript:
+#  - js/search-scope.js
+
 extra_css:
   - styles/overrides.css
+#  - styles/search-scope.css
 
 markdown_extensions:
   - attr_list
@@ -26,7 +37,7 @@ nav:
   - PRODUCTS LIST: products_list/products_names_and_codes.md
   - PRODUCTS DOCUMENTATION:
       - Takeprofit tech hub:
-          - Overview: products_documentation/tpt_hub/1_tpt_hub_overview.md
+          - Introduce: products_documentation/tpt_hub/1_tpt_hub_introduce.md
           - How it works: products_documentation/tpt_hub/2_tpt_hub_how_it_works.md
           - List of supported liquidity providers: products_documentation/tpt_hub/3_tpt_hub_list_of_supported_liquidity_providers.md
           - Installation: products_documentation/tpt_hub/4_tpt_hub_installation.md
@@ -46,3 +57,22 @@ nav:
           - Auxiliary hub tools: products_documentation/tpt_hub/18_tpt_hub_auxiliary_hub_tools.md
           - Questions & answers: products_documentation/tpt_hub/19_tpt_hub_questions_and_answers.md
           - Release Notes: products_documentation/tpt_hub/20_tpt_hub_release_notes.md
+      - Takeprofit social trading:
+          - Overview: products_documentation/tpt_social_trading/1_tpt_social_trading_overview.md
+          - How it works: products_documentation/tpt_social_trading/2_tpt_social_trading_how_it_works.md
+          - Installation: products_documentation/tpt_social_trading/3_tpt_social_trading_installation.md
+          - Updating: products_documentation/tpt_social_trading/4_tpt_social_trading_updating.md
+          - Configuration: products_documentation/tpt_social_trading/5_tpt_social_trading_configuration.md
+          - Monitoring: products_documentation/tpt_social_trading/6_tpt_social_trading_monitoring.md
+          - Home page: products_documentation/tpt_social_trading/7_tpt_social_trading_home_page.md
+          - Market watch: products_documentation/tpt_social_trading/8_tpt_social_trading_market_watch.md
+          - Exposure: products_documentation/tpt_social_trading/9_tpt_social_trading_exposure.md
+          - Users: products_documentation/tpt_social_trading/10_tpt_social_trading_users.md
+          - Settings: products_documentation/tpt_social_trading/11_tpt_social_trading_settings.md
+          - Databases: products_documentation/tpt_social_trading/12_tpt_social_trading_databases.md
+          - Risk management: products_documentation/tpt_social_trading/13_tpt_social_trading_risk_management.md
+          - CYSEC reports: products_documentation/tpt_social_trading/14_tpt_social_trading_cysec_reports.md
+          - REST API: products_documentation/tpt_social_trading/15_tpt_social_trading_rest_api.md
+          - Auxiliary social trading tools: products_documentation/tpt_social_trading/16_tpt_social_trading_auxiliary_tools.md
+          - Questions & answers: products_documentation/tpt_social_trading/17_tpt_social_trading_questions_and_answers.md
+          - Release Notes: products_documentation/tpt_social_trading/18_tpt_social_trading_release_notes.md
